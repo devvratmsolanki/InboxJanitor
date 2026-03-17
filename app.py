@@ -7,7 +7,7 @@ import re
 import urllib.parse
 from flask import Flask, redirect, url_for, session, request, render_template, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from flask_sqlalchemy import SQLAlchemy
+from werkzeug.middleware.proxy_fix import ProxyFix
 from google_auth_oauthlib.flow import Flow
 from googleapiclient.discovery import build
 from google.oauth2.credentials import Credentials
@@ -27,6 +27,8 @@ import threading
 import uuid
 
 app = Flask(__name__)
+# Tell Flask it is behind a proxy (like Render's load balancer) so url_for(_external=True) generates HTTPS URLs instead of HTTP
+app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 app.secret_key = 'your_super_secret_key'
 
 tasks_status = {}
@@ -451,7 +453,7 @@ def login():
     flow = Flow.from_client_secrets_file(
         CLIENT_SECRETS_FILE, 
         scopes=SCOPES,
-        redirect_uri='http://localhost:5005/callback'
+        redirect_uri=url_for('callback', _external=True)
     )
     authorization_url, state = flow.authorization_url(
         access_type='offline',
@@ -474,7 +476,7 @@ def callback():
             CLIENT_SECRETS_FILE, 
             scopes=SCOPES, 
             state=state,
-            redirect_uri='http://localhost:5005/callback'
+            redirect_uri=url_for('callback', _external=True)
         )
         if 'code_verifier' in session:
             flow.code_verifier = session['code_verifier']
