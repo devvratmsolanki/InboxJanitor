@@ -72,7 +72,9 @@ class Whitelist(db.Model):
 
 # Create tables if they don't exist
 with app.app_context():
+    print("Initializing Database tables...")
     db.create_all()
+    print("Database tables initialized.")
 
 def get_gmail_service():
     if 'credentials' not in session:
@@ -127,18 +129,23 @@ def parse_message(service, msg_id):
 
 @app.route('/scan')
 def scan_inbox():
+    print("=== SCAN REQUEST START ===")
     service = get_gmail_service()
     if not service:
+        print("Scan: No gmail service")
         return jsonify({'error': 'Not authenticated'}), 401
     
     # Get the user's email profile context for the DB
+    print("Scan: Getting Profile...")
     profile = service.users().getProfile(userId='me').execute()
     user_email = profile['emailAddress']
+    print(f"Scan: Profile email is {user_email}")
 
     # Get optional pagination token from frontend
     page_token = request.args.get('pageToken')
 
     # Search for promotion or unsubscribe emails, fetch up to 100 to cast a wider net
+    print("Scan: Querying Gmail API...")
     results = service.users().messages().list(
         userId='me', 
         q='category:promotions OR unsubscribe', 
@@ -200,8 +207,16 @@ def scan_inbox():
         except Exception as e:
             print(f"Error parsing message {msg['id']}: {e}")
             
-    db.session.commit()
+    print("Scan: Committing DB session...")
+    try:
+        db.session.commit()
+        print("Scan: DB committed successfully.")
+    except Exception as e:
+        print(f"Scan: DB Commit Failed: {e}")
+        db.session.rollback()
+        raise e
             
+    print(f"=== SCAN REQUEST END: Return {len(subscriptions)} elements ===")
     return jsonify({
         'subscriptions': list(subscriptions.values()),
         'nextPageToken': next_page_token,
