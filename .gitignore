@@ -1,0 +1,10 @@
+credentials.json
+subscriptions.db
+debug_whitelist.log
+instance/
+__pycache__/
+*.pyc
+.env
+build/
+dist/
+*.spec
