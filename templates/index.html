@@ -132,84 +132,46 @@
                 Declutter your <span class="gradient-text">inbox</span> effortlessly.
             </h2>
             <p class="text-slate-500 text-lg max-w-2xl mx-auto">We've scanned your recent promotions. Review the companies sending you emails, see what they've sent, and single-click to eradicate them.</p>
+            <!-- Total Mailbox Count Stat -->
+            <div id="mailbox-stat" class="hidden inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full shadow-sm text-sm font-semibold text-slate-600 dark:text-slate-300 mx-auto">
+                <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
+                <span id="mailbox-total">—</span> total emails in your mailbox
+            </div>
         </div>
 
-        <!-- Analytics Dashboard -->
-        <div id="analytics-dashboard" class="hidden grid grid-cols-1 md:grid-cols-3 gap-6 mb-10 mt-8">
-            <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 flex flex-col hover:shadow-md transition-shadow">
-                <div class="flex items-center gap-3 mb-2">
-                    <div class="p-2 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-lg">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                    </div>
-                    <h3 class="text-sm font-semibold text-slate-500 dark:text-slate-400">Emails Scanned</h3>
-                    <button onclick="openInfoModal('scanned')" class="ml-auto text-slate-300 hover:text-indigo-500 transition-colors focus:outline-none"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></button>
-                </div>
-                <div class="text-3xl font-bold text-slate-900 dark:text-white" id="stat-scanned">0</div>
-            </div>
-            
-            <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 flex flex-col hover:shadow-md transition-shadow relative overflow-hidden">
-                <div class="absolute -right-4 -bottom-4 opacity-5">
-                    <svg class="w-24 h-24 text-indigo-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg>
-                </div>
-                <div class="flex items-center gap-3 mb-2">
-                    <div class="p-2 bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 rounded-lg">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                    </div>
-                    <h3 class="text-sm font-semibold text-slate-500 dark:text-slate-400">Targets Found</h3>
-                    <button onclick="openInfoModal('targets')" class="ml-auto text-slate-300 hover:text-indigo-500 transition-colors focus:outline-none"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></button>
-                </div>
-                <div class="text-3xl font-bold text-slate-900 dark:text-white" id="stat-subs">0</div>
-            </div>
-            
-            <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 flex flex-col hover:shadow-md transition-shadow">
-                <div class="flex items-center gap-3 mb-2">
-                    <div class="p-2 bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 rounded-lg">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
-                    </div>
-                    <h3 class="text-sm font-semibold text-slate-500 dark:text-slate-400">Mail Volume</h3>
-                    <button onclick="openInfoModal('volume')" class="ml-auto text-slate-300 hover:text-indigo-500 transition-colors focus:outline-none"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></button>
-                </div>
-                <div class="text-3xl font-bold text-slate-900 dark:text-white" id="stat-volume">0</div>
-            </div>
-        </div>
+
 
         <!-- Main Card Container -->
         <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700/50 overflow-hidden relative">
             
-            <!-- Controls Toolbar -->
-            <div id="search-container" class="hidden p-4 sm:p-6 border-b border-slate-50 dark:border-slate-700/50 bg-slate-50/50 dark:bg-slate-800/50">
-                <div class="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
-                    
-                    <!-- Search & Filter Tab Group -->
-                    <div class="w-full sm:w-auto flex flex-col sm:flex-row gap-4 items-stretch sm:items-center">
-                        <div class="relative group">
-                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400 group-focus-within:text-indigo-500 transition-colors">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                            </div>
-                            <input type="text" id="search-input" placeholder="Search senders..." class="pl-10 pr-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-600 rounded-xl w-full sm:w-64 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all shadow-sm placeholder:text-slate-400 dark:text-white">
+            <div id="search-container" class="hidden p-4 sm:p-5 border-b border-slate-50 dark:border-slate-700/50 bg-slate-50/50 dark:bg-slate-800/50">
+                <!-- Row 1: Search + Category Tabs -->
+                <div class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center mb-3">
+                    <div class="relative group flex-1 sm:flex-none">
+                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400 group-focus-within:text-indigo-500 transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                         </div>
-                        
-                        <div class="flex bg-slate-100/80 dark:bg-slate-900/50 p-1 rounded-xl w-full sm:w-auto overflow-x-auto custom-scrollbar" id="category-tabs">
-                            <button class="category-tab active flex-1 sm:flex-none px-4 py-1.5 text-sm font-semibold rounded-lg bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm transition-all whitespace-nowrap" data-cat="All">All</button>
-                            <button class="category-tab flex-1 sm:flex-none px-4 py-1.5 text-sm font-semibold rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-all whitespace-nowrap" data-cat="Newsletters">Newsletters</button>
-                            <button class="category-tab flex-1 sm:flex-none px-4 py-1.5 text-sm font-semibold rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-all whitespace-nowrap" data-cat="Promotions">Promotions</button>
-                        </div>
+                        <input type="text" id="search-input" placeholder="Search senders..." class="pl-10 pr-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-600 rounded-xl w-full sm:w-64 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all shadow-sm placeholder:text-slate-400 dark:text-white">
                     </div>
-
-                    <!-- Actions -->
-                    <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
-                        <div class="flex items-center bg-indigo-50 dark:bg-indigo-900/30 rounded-lg p-1 mr-2">
-                            <button id="select-all-btn" class="px-3 py-1.5 text-xs font-bold text-indigo-700 dark:text-indigo-400 rounded-md hover:bg-white dark:hover:bg-slate-700 transition-colors">Select All</button>
-                            <button id="deselect-all-btn" class="px-3 py-1.5 text-xs font-bold text-indigo-700 dark:text-indigo-400 rounded-md hover:bg-white dark:hover:bg-slate-700 transition-colors">Deselect All</button>
-                        </div>
-                        <div class="relative group">
-                            <select id="sort-select" class="appearance-none bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 py-2 pl-4 pr-10 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm font-medium shadow-sm cursor-pointer hover:border-indigo-300 dark:hover:border-indigo-500 transition-colors">
-                                <option value="volume-desc">Highest Volume First</option>
-                                <option value="name-asc">Alphabetical (A-Z)</option>
-                            </select>
-                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400 group-hover:text-indigo-500 transition-colors">
-                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                            </div>
+                    <div class="flex bg-slate-100/80 dark:bg-slate-900/50 p-1 rounded-xl overflow-x-auto custom-scrollbar shrink-0" id="category-tabs">
+                        <button class="category-tab active flex-1 sm:flex-none px-4 py-1.5 text-sm font-semibold rounded-lg bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm transition-all whitespace-nowrap" data-cat="All">All</button>
+                        <button class="category-tab flex-1 sm:flex-none px-4 py-1.5 text-sm font-semibold rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-all whitespace-nowrap" data-cat="Newsletters">Newsletters</button>
+                        <button class="category-tab flex-1 sm:flex-none px-4 py-1.5 text-sm font-semibold rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-all whitespace-nowrap" data-cat="Promotions">Promotions</button>
+                    </div>
+                </div>
+                <!-- Row 2: Select/Deselect + Sort -->
+                <div class="flex items-center gap-3 justify-between">
+                    <div class="flex items-center bg-indigo-50 dark:bg-indigo-900/30 rounded-lg p-1">
+                        <button id="select-all-btn" class="px-3 py-1.5 text-xs font-bold text-indigo-700 dark:text-indigo-400 rounded-md hover:bg-white dark:hover:bg-slate-700 transition-colors">Select All</button>
+                        <button id="deselect-all-btn" class="px-3 py-1.5 text-xs font-bold text-indigo-700 dark:text-indigo-400 rounded-md hover:bg-white dark:hover:bg-slate-700 transition-colors">Deselect All</button>
+                    </div>
+                    <div class="relative group">
+                        <select id="sort-select" class="appearance-none bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 py-2 pl-4 pr-10 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm font-medium shadow-sm cursor-pointer hover:border-indigo-300 dark:hover:border-indigo-500 transition-colors">
+                            <option value="volume-desc">Highest Volume First</option>
+                            <option value="name-asc">Alphabetical (A-Z)</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400 group-hover:text-indigo-500 transition-colors">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                         </div>
                     </div>
                 </div>
@@ -289,7 +251,7 @@
                     </div>
                     <div>
                         <p class="text-lg font-bold text-slate-800 dark:text-slate-200">subscriptions selected for deep deletion</p>
-                        <p class="text-sm text-slate-500 dark:text-slate-400">This will remove both future emails and past history.</p>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">~<span id="footer-email-count">0</span> emails will be permanently removed.</p>
                     </div>
                 </div>
                 <button id="execute-btn" disabled class="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold rounded-2xl shadow-lg hover:shadow-indigo-500/25 transition-all text-lg disabled:opacity-50 disabled:cursor-not-allowed">
@@ -388,6 +350,7 @@
         let totalScanned = 0;
         let currentCategory = 'All';
         let currentSort = 'volume-desc';
+        let selectedSet = new Set(); // tracks original indices of selected subscriptions
         let isFetching = false;
         
         const loadingState = document.getElementById('loading-state');
@@ -401,16 +364,32 @@
         const noSearchResults = document.getElementById('no-search-results');
         
         // New UI Elements
-        const analyticsDashboard = document.getElementById('analytics-dashboard');
-        const statScanned = document.getElementById('stat-scanned');
-        const statSubs = document.getElementById('stat-subs');
-        const statVolume = document.getElementById('stat-volume');
+        const footerEmailCount = document.getElementById('footer-email-count');
+        const mailboxStat = document.getElementById('mailbox-stat');
+        const mailboxTotal = document.getElementById('mailbox-total');
+
         const loadMoreContainer = document.getElementById('load-more-container');
         const loadMoreBtn = document.getElementById('load-more-btn');
         const sortSelect = document.getElementById('sort-select');
         const categoryTabs = document.querySelectorAll('.category-tab');
         const selectAllBtn = document.getElementById('select-all-btn');
         const deselectAllBtn = document.getElementById('deselect-all-btn');
+
+        // Fetch and display total mailbox count
+        async function fetchMailboxStat() {
+            try {
+                const res = await fetch('/api/profile');
+                if (!res.ok) return;
+                const data = await res.json();
+                if (data.messagesTotal) {
+                    mailboxTotal.textContent = data.messagesTotal.toLocaleString();
+                    mailboxStat.classList.remove('hidden');
+                }
+            } catch (e) {
+                console.warn('Could not load mailbox stat', e);
+            }
+        }
+        fetchMailboxStat();
 
         async function fetchSubscriptions(token = null) {
             if (isFetching) return;
@@ -450,7 +429,6 @@
                 
                 nextPageToken = data.nextPageToken;
                 totalScanned += data.scanned_count;
-                updateAnalytics();
                 
                 if (!token) {
                     loadingState.style.opacity = '0';
@@ -486,22 +464,15 @@
             }
         }
         
-        function updateAnalytics() {
-            statScanned.innerText = totalScanned.toLocaleString();
-            statSubs.innerText = subscriptions.length.toLocaleString();
-            const volume = subscriptions.reduce((sum, sub) => sum + sub.count, 0);
-            statVolume.innerText = volume.toLocaleString();
-        }
+
 
         function finishFetchingUI() {
             if (subscriptions.length === 0 && !nextPageToken) {
                 emptyState.classList.remove('hidden');
-                analyticsDashboard.classList.add('hidden');
                 searchContainer.classList.add('hidden');
                 loadMoreContainer.classList.add('hidden');
                 subscriptionList.classList.add('hidden');
             } else {
-                analyticsDashboard.classList.remove('hidden');
                 searchContainer.classList.remove('hidden');
                 emptyState.classList.add('hidden');
                 
@@ -517,6 +488,35 @@
                 // Slide up footer animation
                 setTimeout(() => { actionFooter.classList.remove('translate-y-full'); }, 50);
                 updateSelectedCount();
+
+                // Fetch real per-sender inbox counts in background
+                fetchTotalCounts();
+            }
+        }
+
+        // Fetch actual email counts per sender from the full mailbox
+        async function fetchTotalCounts() {
+            try {
+                const emails = subscriptions.map(s => s.email);
+                const res = await fetch('/api/total-counts', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ emails })
+                });
+                if (!res.ok) return;
+                const counts = await res.json();
+                // Patch each subscription with the real count
+                subscriptions.forEach(sub => {
+                    if (counts[sub.email] !== undefined) {
+                        sub.totalCount = counts[sub.email];
+                    }
+                });
+                // Re-render so sort order updates to reflect real volumes
+                applyFiltersAndRender();
+                // Re-run footer update in case anything is already selected
+                updateSelectedCount();
+            } catch (e) {
+                console.warn('Could not fetch total counts', e);
             }
         }
 
@@ -534,9 +534,13 @@
                 filtered = filtered.filter(item => item.sub.name.toLowerCase().includes(query) || item.sub.email.toLowerCase().includes(query));
             }
             
-            // 2. Sort
+            // 2. Sort — use real totalCount if loaded, otherwise fall back to scanned count
             if (currentSort === 'volume-desc') {
-                filtered.sort((a, b) => b.sub.count - a.sub.count);
+                filtered.sort((a, b) => {
+                    const aVol = a.sub.totalCount !== undefined ? a.sub.totalCount : a.sub.count;
+                    const bVol = b.sub.totalCount !== undefined ? b.sub.totalCount : b.sub.count;
+                    return bVol - aVol;
+                });
             } else if (currentSort === 'name-asc') {
                 filtered.sort((a, b) => a.sub.name.localeCompare(b.sub.name));
             }
@@ -578,10 +582,13 @@
         
         // Bulk Actions
         selectAllBtn.addEventListener('click', () => {
+            // Add all currently visible (filtered) subscriptions to the set
+            filteredIndices.forEach(idx => selectedSet.add(idx));
             document.querySelectorAll('.sub-checkbox').forEach(cb => cb.checked = true);
             updateSelectedCount();
         });
         deselectAllBtn.addEventListener('click', () => {
+            selectedSet.clear();
             document.querySelectorAll('.sub-checkbox').forEach(cb => cb.checked = false);
             updateSelectedCount();
         });
@@ -614,7 +621,6 @@
                 
                 // If there's an active filter or search query, re-run, otherwise render full array
                 applyFiltersAndRender();
-                updateAnalytics();
 
                 // If empty, show empty state
                 if (subscriptions.length === 0 && !nextPageToken) {
@@ -663,16 +669,22 @@
                                 ${sub.unsub_link ? '<span class="font-semibold px-2 py-0.5 rounded bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 border border-emerald-100/50 dark:border-emerald-800/50">Unsub Link Ready</span>' : ''}
                             </div>
                         </div>
-                        <div class="flex items-center gap-4">
+                        <div class="flex items-center gap-3">
                             <!-- Whitelist Button -->
-                            <button class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-slate-800 dark:hover:text-white transition-colors focus:outline-none" onclick="whitelistSender(event, ${originalIdx}, '${sub.email}')">
+                            <button class="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/50 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 transition-colors focus:outline-none" onclick="whitelistSender(event, ${originalIdx}, '${sub.email}')">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
                                 Whitelist
                             </button>
+                            <!-- Divider -->
+                            <div class="w-px h-6 bg-slate-200 dark:bg-slate-700"></div>
                             <!-- Selection Toggle -->
-                            <label class="toggle-switch">
-                                <input type="checkbox" value="${originalIdx}" class="sub-checkbox" onchange="updateSelectedCount()">
-                                <span class="slider"></span>
-                            </label>
+                            <div class="flex flex-col items-center gap-0.5">
+                                <span class="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wide">Delete</span>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" value="${originalIdx}" class="sub-checkbox" ${selectedSet.has(originalIdx) ? 'checked' : ''} onchange="toggleSelected(${originalIdx}, this.checked)">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
                         </div>
                     </div>
                     
@@ -742,16 +754,34 @@
             }
         }
 
+        // Called when a toggle changes — updates selectedSet then refreshes footer
+        function toggleSelected(originalIdx, isChecked) {
+            if (isChecked) {
+                selectedSet.add(originalIdx);
+            } else {
+                selectedSet.delete(originalIdx);
+            }
+            updateSelectedCount();
+        }
+
         // Delegate change event for checkboxes since they are dynamically rendered
         // The onclick logic inside the HTML string handles updateSelectedCount visually via onchange
         function updateSelectedCount() {
-            // Need to query all checkboxes across the document since we hide/filter rows
-            const allCheckboxes = document.querySelectorAll('.sub-checkbox');
-            const checkedCount = Array.from(allCheckboxes).filter(cb => cb.checked).length;
+            const count = selectedSet.size;
+            selectedCount.textContent = count;
+
+            // Sum the real totalCount (from full inbox) for selected senders
+            // Fall back to scanned count if real count not yet loaded
+            let totalEmailsToDelete = 0;
+            selectedSet.forEach(idx => {
+                const sub = subscriptions[idx];
+                if (sub) {
+                    totalEmailsToDelete += sub.totalCount !== undefined ? sub.totalCount : (sub.count || 0);
+                }
+            });
+            footerEmailCount.textContent = totalEmailsToDelete.toLocaleString();
             
-            selectedCount.textContent = checkedCount;
-            
-            if (checkedCount === 0) {
+            if (count === 0) {
                 executeBtn.disabled = true;
                 executeBtn.classList.remove('from-indigo-600', 'to-purple-600', 'hover:-translate-y-0.5');
                 executeBtn.classList.add('bg-slate-300', 'text-slate-500');
@@ -788,7 +818,7 @@
             const allCheckboxes = Array.from(document.querySelectorAll('.sub-checkbox:checked'));
             if (allCheckboxes.length === 0) return;
             
-            modalText.innerHTML = `You are about to unsubscribe and permanently delete all history from <b class="text-slate-800">${allCheckboxes.length} companies</b>. This action cannot be undone.`;
+            modalText.innerHTML = `You are about to unsubscribe and permanently delete all history from <b class="text-slate-800">${selectedSet.size} companies</b>. This action cannot be undone.`;
             
             confirmModal.classList.remove('hidden');
             // Trigger animation
@@ -799,9 +829,9 @@
         });
 
         btnConfirm.addEventListener('click', async () => {
-            const allCheckboxes = Array.from(document.querySelectorAll('.sub-checkbox:checked'));
-            const selectedIndices = allCheckboxes.map(cb => parseInt(cb.value));
-            const selectedSubs = selectedIndices.map(i => subscriptions[i]);
+            const selectedIndicesArr = Array.from(selectedSet);
+            const selectedSubs = selectedIndicesArr.map(i => subscriptions[i]).filter(Boolean);
+            if (selectedSubs.length === 0) return;
             
             // Initial Loading State
             btnConfirm.disabled = true;

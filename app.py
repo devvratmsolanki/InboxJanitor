@@ -507,6 +507,56 @@ def callback():
         print(f"Auth error: {e}")
         return redirect(url_for('login'))
 
+@app.route('/api/total-counts', methods=['POST'])
+def get_total_counts():
+    service = get_gmail_service()
+    if not service:
+        return jsonify({'error': 'Not authenticated'}), 401
+
+    data = request.json
+    emails = data.get('emails', [])
+    if not emails:
+        return jsonify({}), 200
+
+    counts = {}
+    for email in emails:
+        try:
+            # Use the same domain-wildcard query as eradication for an accurate match
+            domain = email.split('@')[-1] if '@' in email else email
+            query = f'from:*{domain}'
+            
+            total = 0
+            page_token = None
+            while True:
+                kwargs = {'userId': 'me', 'q': query, 'maxResults': 500}
+                if page_token:
+                    kwargs['pageToken'] = page_token
+                result = service.users().messages().list(**kwargs).execute()
+                messages = result.get('messages', [])
+                total += len(messages)
+                page_token = result.get('nextPageToken')
+                if not page_token:
+                    break
+
+            counts[email] = total
+        except Exception as e:
+            print(f"Error counting emails for {email}: {e}")
+            counts[email] = 0
+
+    return jsonify(counts)
+
+@app.route('/api/profile')
+def get_profile():
+    service = get_gmail_service()
+    if not service:
+        return jsonify({'error': 'Not authenticated'}), 401
+    profile = service.users().getProfile(userId='me').execute()
+    return jsonify({
+        'email': profile.get('emailAddress', ''),
+        'messagesTotal': profile.get('messagesTotal', 0),
+        'threadsTotal': profile.get('threadsTotal', 0)
+    })
+
 @app.route('/logout')
 def logout():
     session.clear()
