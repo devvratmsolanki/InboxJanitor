@@ -1,5 +1,7 @@
 import os
 import json
+import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import requests
 from email.message import EmailMessage
 import base64
@@ -518,13 +520,10 @@ def get_total_counts():
     if not emails:
         return jsonify({}), 200
 
-    counts = {}
-    for email in emails:
+    def count_for_email(email):
         try:
-            # Use the same domain-wildcard query as eradication for an accurate match
             domain = email.split('@')[-1] if '@' in email else email
             query = f'from:*{domain}'
-            
             total = 0
             page_token = None
             while True:
@@ -532,16 +531,22 @@ def get_total_counts():
                 if page_token:
                     kwargs['pageToken'] = page_token
                 result = service.users().messages().list(**kwargs).execute()
-                messages = result.get('messages', [])
-                total += len(messages)
+                total += len(result.get('messages', []))
                 page_token = result.get('nextPageToken')
                 if not page_token:
                     break
-
-            counts[email] = total
+            return email, total
         except Exception as e:
             print(f"Error counting emails for {email}: {e}")
-            counts[email] = 0
+            return email, 0
+
+    counts = {}
+    # Fetch all sender counts in parallel — reduces N*T to ~T
+    with ThreadPoolExecutor(max_workers=8) as executor:
+        futures = {executor.submit(count_for_email, email): email for email in emails}
+        for future in as_completed(futures):
+            email, total = future.result()
+            counts[email] = total
 
     return jsonify(counts)
 
