@@ -511,8 +511,7 @@ def callback():
 
 @app.route('/api/total-counts', methods=['POST'])
 def get_total_counts():
-    service = get_gmail_service()
-    if not service:
+    if 'credentials' not in session:
         return jsonify({'error': 'Not authenticated'}), 401
 
     data = request.json
@@ -520,8 +519,19 @@ def get_total_counts():
     if not emails:
         return jsonify({}), 200
 
+    # Snapshot credentials so each thread can build its OWN service object.
+    # The Google API client (httplib2) is NOT thread-safe, so sharing one
+    # service across threads causes random crashes.
+    creds_dict = dict(session['credentials'])
+
     def count_for_email(email):
         try:
+            # Build a fresh, isolated service per thread
+            from google.oauth2.credentials import Credentials as OAuthCreds
+            from googleapiclient.discovery import build as build_service
+            thread_creds = OAuthCreds(**creds_dict)
+            thread_service = build_service(API_SERVICE_NAME, API_VERSION, credentials=thread_creds)
+
             domain = email.split('@')[-1] if '@' in email else email
             query = f'from:*{domain}'
             total = 0
@@ -530,7 +540,7 @@ def get_total_counts():
                 kwargs = {'userId': 'me', 'q': query, 'maxResults': 500}
                 if page_token:
                     kwargs['pageToken'] = page_token
-                result = service.users().messages().list(**kwargs).execute()
+                result = thread_service.users().messages().list(**kwargs).execute()
                 total += len(result.get('messages', []))
                 page_token = result.get('nextPageToken')
                 if not page_token:
@@ -541,8 +551,8 @@ def get_total_counts():
             return email, 0
 
     counts = {}
-    # Fetch all sender counts in parallel — reduces N*T to ~T
-    with ThreadPoolExecutor(max_workers=8) as executor:
+    # Run in parallel with isolated service per thread (max 4 to respect Gmail rate limits)
+    with ThreadPoolExecutor(max_workers=4) as executor:
         futures = {executor.submit(count_for_email, email): email for email in emails}
         for future in as_completed(futures):
             email, total = future.result()
