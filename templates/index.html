@@ -50,12 +50,12 @@
             border-radius: 10px;
         }
         
-        /* Custom Checkbox Toggle */
+        /* Custom Toggle Switch */
         .toggle-switch {
             position: relative;
             display: inline-block;
-            width: 50px;
-            height: 26px;
+            width: 44px;
+            height: 24px;
         }
         .toggle-switch input {
             opacity: 0;
@@ -73,8 +73,8 @@
         .slider:before {
             position: absolute;
             content: "";
-            height: 20px;
-            width: 20px;
+            height: 18px;
+            width: 18px;
             left: 3px;
             bottom: 3px;
             background-color: white;
@@ -85,11 +85,31 @@
         input:checked + .slider {
             background: linear-gradient(135deg, #4F46E5 0%, #6366f1 100%);
         }
+        .unsub-toggle input:checked + .slider {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+        }
         input:focus + .slider {
             box-shadow: 0 0 1px #4F46E5;
         }
         input:checked + .slider:before {
-            transform: translateX(24px);
+            transform: translateX(20px);
+        }
+        /* Select-all master checkbox */
+        .master-checkbox {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #4F46E5;
+            border-radius: 4px;
+        }
+        /* Count shimmer animation */
+        @keyframes shimmer {
+            0% { opacity: 0.4; }
+            50% { opacity: 1; }
+            100% { opacity: 0.4; }
+        }
+        .count-shimmer {
+            animation: shimmer 1.2s ease-in-out infinite;
         }
     </style>
 </head>
@@ -145,27 +165,15 @@
         <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700/50 overflow-hidden relative">
             
             <div id="search-container" class="hidden p-4 sm:p-5 border-b border-slate-50 dark:border-slate-700/50 bg-slate-50/50 dark:bg-slate-800/50">
-                <!-- Row 1: Search + Category Tabs -->
-                <div class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center mb-3">
-                    <div class="relative group flex-1 sm:flex-none">
+                <!-- Row 1: Search + Sort -->
+                <div class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+                    <div class="relative group flex-1">
                         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400 group-focus-within:text-indigo-500 transition-colors">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                         </div>
-                        <input type="text" id="search-input" placeholder="Search senders..." class="pl-10 pr-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-600 rounded-xl w-full sm:w-64 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all shadow-sm placeholder:text-slate-400 dark:text-white">
+                        <input type="text" id="search-input" placeholder="Search senders..." class="pl-10 pr-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-600 rounded-xl w-full focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all shadow-sm placeholder:text-slate-400 dark:text-white">
                     </div>
-                    <div class="flex bg-slate-100/80 dark:bg-slate-900/50 p-1 rounded-xl overflow-x-auto custom-scrollbar shrink-0" id="category-tabs">
-                        <button class="category-tab active flex-1 sm:flex-none px-4 py-1.5 text-sm font-semibold rounded-lg bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm transition-all whitespace-nowrap" data-cat="All">All</button>
-                        <button class="category-tab flex-1 sm:flex-none px-4 py-1.5 text-sm font-semibold rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-all whitespace-nowrap" data-cat="Newsletters">Newsletters</button>
-                        <button class="category-tab flex-1 sm:flex-none px-4 py-1.5 text-sm font-semibold rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-all whitespace-nowrap" data-cat="Promotions">Promotions</button>
-                    </div>
-                </div>
-                <!-- Row 2: Select/Deselect + Sort -->
-                <div class="flex items-center gap-3 justify-between">
-                    <div class="flex items-center bg-indigo-50 dark:bg-indigo-900/30 rounded-lg p-1">
-                        <button id="select-all-btn" class="px-3 py-1.5 text-xs font-bold text-indigo-700 dark:text-indigo-400 rounded-md hover:bg-white dark:hover:bg-slate-700 transition-colors">Select All</button>
-                        <button id="deselect-all-btn" class="px-3 py-1.5 text-xs font-bold text-indigo-700 dark:text-indigo-400 rounded-md hover:bg-white dark:hover:bg-slate-700 transition-colors">Deselect All</button>
-                    </div>
-                    <div class="relative group">
+                    <div class="relative group shrink-0">
                         <select id="sort-select" class="appearance-none bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 py-2 pl-4 pr-10 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm font-medium shadow-sm cursor-pointer hover:border-indigo-300 dark:hover:border-indigo-500 transition-colors">
                             <option value="volume-desc">Highest Volume First</option>
                             <option value="name-asc">Alphabetical (A-Z)</option>
@@ -187,23 +195,34 @@
                 <p class="text-slate-500 dark:text-slate-400">Unearthing those hidden subscriptions and compiling the list.</p>
             </div>
 
-            <div id="no-search-results" class="hidden p-16 text-center">
-                <p class="text-slate-500 dark:text-slate-400">No subscriptions match your search.</p>
-            </div>
-            
-            <div id="no-results" class="text-center py-20 hidden">
-                <div class="w-20 h-20 bg-slate-50 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg class="w-10 h-10 text-slate-400 dark:text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
-                    </svg>
-                </div>
-                <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-1" id="no-results-title">No subscriptions found</h3>
-                <p class="text-slate-500 dark:text-slate-400 text-sm" id="no-results-desc">Try adjusting your search or filters.</p>
-            </div>
 
             <!-- List Container -->
             <div id="subscription-list" class="hidden flex flex-col transition-all duration-300 min-h-[300px]">
-                <!-- Populated via JS -->
+                <!-- Select-all header row (shown via JS) -->
+                <div id="select-all-header" class="hidden flex items-center gap-3 px-6 sm:px-8 py-3 bg-slate-50/80 dark:bg-slate-800/60 border-b border-slate-100 dark:border-slate-800">
+                    <!-- Left: summary text -->
+                    <span class="text-xs text-slate-400 dark:text-slate-500 flex-1" id="selected-summary"></span>
+                    <!-- Right: two select-all controls aligned with the toggle columns -->
+                    <div class="flex items-center gap-4 sm:gap-6">
+                        <!-- Select All Unsub -->
+                        <div class="flex flex-col items-center gap-0.5">
+                            <span class="text-[9px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wide">Unsub All</span>
+                            <label class="toggle-switch unsub-toggle cursor-pointer" title="Select / deselect all for Unsubscribe">
+                                <input type="checkbox" id="master-unsub-checkbox" class="master-checkbox">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <!-- Select All Delete -->
+                        <div class="flex flex-col items-center gap-0.5">
+                            <span class="text-[9px] font-bold text-red-500 dark:text-red-400 uppercase tracking-wide">Delete All</span>
+                            <label class="toggle-switch cursor-pointer" title="Select / deselect all for Delete">
+                                <input type="checkbox" id="master-delete-checkbox" class="master-checkbox">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <!-- Rows populated via JS -->
             </div>
             
             <div id="load-more-container" class="hidden p-6 text-center border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50">
@@ -243,20 +262,48 @@
         </div>
 
         <!-- Action Footer -->
-        <div id="action-footer" class="fixed bottom-0 left-0 right-0 glass-footer p-6 sm:p-8 transform translate-y-full transition-transform duration-500 z-40 border-t border-slate-200 dark:border-slate-700/50 shadow-[0_-10px_40px_rgba(0,0,0,0.05)] dark:shadow-[0_-10px_40px_rgba(0,0,0,0.3)]">
-            <div class="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
+        <div id="action-footer" class="fixed bottom-0 left-0 right-0 glass-footer pt-4 pb-5 px-6 sm:px-8 transform translate-y-full transition-transform duration-500 z-40 border-t border-slate-200 dark:border-slate-700/50 shadow-[0_-10px_40px_rgba(0,0,0,0.05)] dark:shadow-[0_-10px_40px_rgba(0,0,0,0.3)]">
+            <div class="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+                <!-- Left: count + email estimate -->
                 <div class="flex items-center gap-4">
                     <div class="w-14 h-14 rounded-2xl bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center border border-indigo-100 dark:border-indigo-800/50">
                         <span id="selected-count" class="text-2xl font-black text-indigo-600 dark:text-indigo-400 transition-all duration-200">0</span>
                     </div>
                     <div>
-                        <p class="text-lg font-bold text-slate-800 dark:text-slate-200">subscriptions selected for deep deletion</p>
-                        <p class="text-sm text-slate-500 dark:text-slate-400">~<span id="footer-email-count">0</span> emails will be permanently removed.</p>
+                        <p class="text-base font-bold text-slate-800 dark:text-slate-200">subscriptions selected</p>
+                        <p class="text-sm text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
+                            ~<span id="footer-email-count">0</span>
+                            <span id="footer-count-loading" class="hidden">
+                                <span class="inline-flex gap-0.5 items-center">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-indigo-400 count-shimmer" style="animation-delay:0s"></span>
+                                    <span class="w-1.5 h-1.5 rounded-full bg-indigo-400 count-shimmer" style="animation-delay:0.2s"></span>
+                                    <span class="w-1.5 h-1.5 rounded-full bg-indigo-400 count-shimmer" style="animation-delay:0.4s"></span>
+                                </span>
+                            </span>
+                            emails will be removed
+                        </p>
                     </div>
                 </div>
-                <button id="execute-btn" disabled class="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold rounded-2xl shadow-lg hover:shadow-indigo-500/25 transition-all text-lg disabled:opacity-50 disabled:cursor-not-allowed">
-                    Eradicate Them
-                </button>
+                <!-- Right: retention dropdown + action button -->
+                <div class="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+                    <div class="relative group w-full sm:w-auto">
+                        <select id="retention-select" class="appearance-none w-full sm:w-auto bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 py-2.5 pl-4 pr-9 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm font-medium shadow-sm cursor-pointer hover:border-indigo-300 dark:hover:border-indigo-500 transition-colors">
+                            <option value="0">Delete all emails</option>
+                            <option value="7">Keep last 7 days</option>
+                            <option value="15">Keep last 15 days</option>
+                            <option value="30">Keep last 1 month</option>
+                            <option value="90">Keep last 3 months</option>
+                            <option value="180">Keep last 6 months</option>
+                            <option value="365">Keep last 12 months</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-400">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                    </div>
+                    <button id="execute-btn" disabled class="w-full sm:w-auto px-8 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold rounded-2xl shadow-lg hover:shadow-indigo-500/25 transition-all text-base disabled:opacity-50 disabled:cursor-not-allowed">
+                        Eradicate Them
+                    </button>
+                </div>
             </div>
         </div>
     </main>
@@ -345,35 +392,130 @@
         }
 
         let subscriptions = [];
-        let filteredIndices = []; // Maps filtered list index back to original subscriptions index
+        let filteredIndices = []; // Maps filtered list index to original subscriptions index
         let nextPageToken = null;
         let totalScanned = 0;
-        let currentCategory = 'All';
         let currentSort = 'volume-desc';
-        let selectedSet = new Set(); // tracks original indices of selected subscriptions
+        let selectedSet = new Set(); // original indices selected for DELETE
+        let unsubSet   = new Set(); // original indices selected for UNSUBSCRIBE
         let isFetching = false;
-        
-        const loadingState = document.getElementById('loading-state');
-        const subscriptionList = document.getElementById('subscription-list');
-        const emptyState = document.getElementById('empty-state');
-        const actionFooter = document.getElementById('action-footer');
-        const selectedCount = document.getElementById('selected-count');
-        const executeBtn = document.getElementById('execute-btn');
-        const searchContainer = document.getElementById('search-container');
-        const searchInput = document.getElementById('search-input');
-        const noSearchResults = document.getElementById('no-search-results');
-        
-        // New UI Elements
-        const footerEmailCount = document.getElementById('footer-email-count');
-        const mailboxStat = document.getElementById('mailbox-stat');
-        const mailboxTotal = document.getElementById('mailbox-total');
+        let countsLoading = false;
+        let csrfToken = '';  // BUG-12 FIX: CSRF token fetched from server
 
+        // ── BUG-12 FIX: Fetch CSRF token on load ────────────────────────
+        async function initCsrfToken() {
+            try {
+                const res = await fetch('/api/csrf-token');
+                if (res.ok) {
+                    const data = await res.json();
+                    csrfToken = data.csrf_token || '';
+                }
+            } catch (e) {
+                console.warn('Could not fetch CSRF token', e);
+            }
+        }
+
+        // ── BUG-15 FIX: HTML sanitizer — prevents XSS from sender data ──
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        // ── Authenticated fetch wrapper (adds CSRF header) ───────────────
+        function authedFetch(url, options = {}) {
+            const headers = { 'Content-Type': 'application/json', ...(options.headers || {}) };
+            if (csrfToken && ['POST','PUT','DELETE','PATCH'].includes((options.method || 'GET').toUpperCase())) {
+                headers['X-CSRF-Token'] = csrfToken;
+            }
+            return fetch(url, { ...options, headers });
+        }
+        
+        const loadingState      = document.getElementById('loading-state');
+        const subscriptionList  = document.getElementById('subscription-list');
+        const emptyState        = document.getElementById('empty-state');
+        const actionFooter      = document.getElementById('action-footer');
+        const selectedCount     = document.getElementById('selected-count');
+        const executeBtn        = document.getElementById('execute-btn');
+        const searchContainer   = document.getElementById('search-container');
+        const searchInput       = document.getElementById('search-input');
+        const noSearchResults   = document.getElementById('no-search-results');
+        const footerEmailCount  = document.getElementById('footer-email-count');
+        const footerCountLoading= document.getElementById('footer-count-loading');
+        const mailboxStat       = document.getElementById('mailbox-stat');
+        const mailboxTotal      = document.getElementById('mailbox-total');
         const loadMoreContainer = document.getElementById('load-more-container');
-        const loadMoreBtn = document.getElementById('load-more-btn');
-        const sortSelect = document.getElementById('sort-select');
-        const categoryTabs = document.querySelectorAll('.category-tab');
-        const selectAllBtn = document.getElementById('select-all-btn');
-        const deselectAllBtn = document.getElementById('deselect-all-btn');
+        const loadMoreBtn       = document.getElementById('load-more-btn');
+        const sortSelect        = document.getElementById('sort-select');
+        const retentionSelect   = document.getElementById('retention-select');
+        const masterUnsubCheckbox = document.getElementById('master-unsub-checkbox');
+        const masterDeleteCheckbox = document.getElementById('master-delete-checkbox');
+        const selectedSummary      = document.getElementById('selected-summary');
+        const selectAllHeader      = document.getElementById('select-all-header');
+
+        // ── Master Unsub Select-All ──────────────────────────────────────
+        masterUnsubCheckbox.addEventListener('change', () => {
+            if (masterUnsubCheckbox.checked) {
+                filteredIndices.forEach(idx => unsubSet.add(idx));
+                document.querySelectorAll('.unsub-checkbox').forEach(cb => cb.checked = true);
+            } else {
+                filteredIndices.forEach(idx => unsubSet.delete(idx));
+                document.querySelectorAll('.unsub-checkbox').forEach(cb => cb.checked = false);
+            }
+            syncMasterCheckboxes();
+            updateSelectedCount();
+        });
+
+        // ── Master Delete Select-All ─────────────────────────────────────
+        masterDeleteCheckbox.addEventListener('change', () => {
+            if (masterDeleteCheckbox.checked) {
+                filteredIndices.forEach(idx => selectedSet.add(idx));
+                document.querySelectorAll('.sub-checkbox').forEach(cb => cb.checked = true);
+            } else {
+                filteredIndices.forEach(idx => selectedSet.delete(idx));
+                document.querySelectorAll('.sub-checkbox').forEach(cb => cb.checked = false);
+            }
+            syncMasterCheckboxes();
+            updateSelectedCount();
+        });
+
+        function syncMasterCheckboxes() {
+            if (filteredIndices.length === 0) {
+                masterUnsubCheckbox.indeterminate = false;
+                masterUnsubCheckbox.checked = false;
+                masterDeleteCheckbox.indeterminate = false;
+                masterDeleteCheckbox.checked = false;
+                selectedSummary.textContent = '';
+                return;
+            }
+
+            // Sync Unsub toggle
+            const allUnsub  = filteredIndices.every(i => unsubSet.has(i));
+            const anyUnsub  = filteredIndices.some(i  => unsubSet.has(i));
+            masterUnsubCheckbox.checked       = allUnsub;
+            masterUnsubCheckbox.indeterminate = !allUnsub && anyUnsub;
+
+            // Sync Delete toggle
+            const allDel  = filteredIndices.every(i => selectedSet.has(i));
+            const anyDel  = filteredIndices.some(i  => selectedSet.has(i));
+            masterDeleteCheckbox.checked       = allDel;
+            masterDeleteCheckbox.indeterminate = !allDel && anyDel;
+
+            // Summary text
+            const nDel   = filteredIndices.filter(i => selectedSet.has(i)).length;
+            const nUnsub = filteredIndices.filter(i => unsubSet.has(i)).length;
+            const parts  = [];
+            if (nDel   > 0) parts.push(`${nDel} delete`);
+            if (nUnsub > 0) parts.push(`${nUnsub} unsub`);
+            selectedSummary.textContent = parts.length > 0 ? parts.join(' · ') + ` of ${filteredIndices.length}` : '';
+        }
+
+        // Keep old name as alias so other call-sites still work
+        const syncMasterCheckbox = syncMasterCheckboxes;
 
         // Fetch and display total mailbox count
         async function fetchMailboxStat() {
@@ -389,7 +531,11 @@
                 console.warn('Could not load mailbox stat', e);
             }
         }
+
+        // Kick off both init tasks in parallel
+        initCsrfToken();
         fetchMailboxStat();
+        fetchSubscriptions();
 
         async function fetchSubscriptions(token = null) {
             if (isFetching) return;
@@ -496,45 +642,49 @@
 
         // Fetch actual email counts per sender from the full mailbox
         async function fetchTotalCounts() {
+            countsLoading = true;
+            if (selectedSet.size > 0) {
+                footerCountLoading.classList.remove('hidden');
+            }
             try {
                 const emails = subscriptions.map(s => s.email);
-                const res = await fetch('/api/total-counts', {
+                const res = await authedFetch('/api/total-counts', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ emails })
                 });
                 if (!res.ok) return;
                 const counts = await res.json();
-                // Patch each subscription with the real count
                 subscriptions.forEach(sub => {
                     if (counts[sub.email] !== undefined) {
                         sub.totalCount = counts[sub.email];
+                        sub._countLoaded = true;
                     }
                 });
-                // Re-render so sort order updates to reflect real volumes
                 applyFiltersAndRender();
-                // Re-run footer update in case anything is already selected
                 updateSelectedCount();
             } catch (e) {
                 console.warn('Could not fetch total counts', e);
+            } finally {
+                countsLoading = false;
+                footerCountLoading.classList.add('hidden');
+                // BUG-16 FIX: Update count label to remove 'estimating' once counts arrive
+                updateSelectedCount();
             }
         }
 
         function applyFiltersAndRender() {
             const query = searchInput.value.toLowerCase().trim();
             
-            // 1. Filter by search & category
-            // We use map to keep track of the original index in the unified subscriptions array
+            // Filter by search only (no category tabs)
             let filtered = subscriptions.map((sub, index) => ({ sub, index }));
-            
-            if (currentCategory !== 'All') {
-                filtered = filtered.filter(item => item.sub.category === currentCategory);
-            }
             if (query) {
-                filtered = filtered.filter(item => item.sub.name.toLowerCase().includes(query) || item.sub.email.toLowerCase().includes(query));
+                filtered = filtered.filter(item =>
+                    item.sub.name.toLowerCase().includes(query) ||
+                    item.sub.email.toLowerCase().includes(query)
+                );
             }
             
-            // 2. Sort — use real totalCount if loaded, otherwise fall back to scanned count
+            // Sort
             if (currentSort === 'volume-desc') {
                 filtered.sort((a, b) => {
                     const aVol = a.sub.totalCount !== undefined ? a.sub.totalCount : a.sub.count;
@@ -549,90 +699,63 @@
             const subsToRender = filtered.map(item => item.sub);
             
             renderSubscriptions(subsToRender, true);
+            syncMasterCheckbox();
         }
 
-        // Event Listeners for Filters & Load More
+        // Event Listeners
         searchInput.addEventListener('input', applyFiltersAndRender);
         sortSelect.addEventListener('change', (e) => {
             currentSort = e.target.value;
             applyFiltersAndRender();
         });
-        
-        categoryTabs.forEach(tab => {
-            tab.addEventListener('click', (e) => {
-                // Reset all tabs
-                categoryTabs.forEach(t => {
-                    t.classList.remove('active', 'bg-white', 'text-indigo-600', 'shadow-sm', 'dark:bg-slate-700', 'dark:text-indigo-400');
-                    t.classList.add('text-slate-500', 'hover:text-slate-700', 'dark:text-slate-400', 'dark:hover:text-slate-200');
-                });
-                
-                // Set clicked tab to active state
-                const clicked = e.target;
-                clicked.classList.add('active', 'bg-white', 'text-indigo-600', 'shadow-sm', 'dark:bg-slate-700', 'dark:text-indigo-400');
-                clicked.classList.remove('text-slate-500', 'hover:text-slate-700', 'dark:text-slate-400', 'dark:hover:text-slate-200');
-                
-                currentCategory = clicked.dataset.cat;
-                applyFiltersAndRender();
-            });
-        });
-        
         loadMoreBtn.addEventListener('click', () => {
             if (nextPageToken) fetchSubscriptions(nextPageToken);
         });
-        
-        // Bulk Actions
-        selectAllBtn.addEventListener('click', () => {
-            // Add all currently visible (filtered) subscriptions to the set
-            filteredIndices.forEach(idx => selectedSet.add(idx));
-            document.querySelectorAll('.sub-checkbox').forEach(cb => cb.checked = true);
-            updateSelectedCount();
-        });
-        deselectAllBtn.addEventListener('click', () => {
-            selectedSet.clear();
-            document.querySelectorAll('.sub-checkbox').forEach(cb => cb.checked = false);
-            updateSelectedCount();
-        });
 
-        async function whitelistSender(event, originalIdx, email) {
-            // Prevent event from bubbling up and expanding the row
+        async function whitelistSender(event, email) {
+            // BUG-15 FIX: email comes from data attribute (already escaped), not raw inline JS
             event.stopPropagation();
-            
-            // Add loading feedback to the button
             const btn = event.currentTarget;
-            const originalText = btn.innerText;
+            const originalHTML = btn.innerHTML;
             btn.innerHTML = 'Wait...';
             btn.disabled = true;
 
             try {
-                const response = await fetch('/whitelist', {
+                const response = await authedFetch('/whitelist', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ sender_email: email })
                 });
-
-                if (response.status === 401) {
-                    window.location.href = '/login';
-                    return;
-                }
+                if (response.status === 401) { window.location.href = '/login'; return; }
                 if (!response.ok) throw new Error('Failed to whitelist');
 
-                // Remove from the local array
-                subscriptions.splice(originalIdx, 1);
-                
-                // If there's an active filter or search query, re-run, otherwise render full array
-                applyFiltersAndRender();
+                // BUG-04 + BUG-17 FIX: Find by email, not stale array index
+                const removedIdx = subscriptions.findIndex(s => s.email === email);
+                if (removedIdx !== -1) {
+                    subscriptions.splice(removedIdx, 1);
+                    // Rebuild selectedSet and unsubSet to remove the now-invalid index
+                    // and shift higher indices down by one
+                    const newSelected = new Set();
+                    const newUnsub = new Set();
+                    selectedSet.forEach(i => { if (i < removedIdx) newSelected.add(i); else if (i > removedIdx) newSelected.add(i - 1); });
+                    unsubSet.forEach(i => { if (i < removedIdx) newUnsub.add(i); else if (i > removedIdx) newUnsub.add(i - 1); });
+                    selectedSet = newSelected;
+                    unsubSet = newUnsub;
+                }
 
-                // If empty, show empty state
+                applyFiltersAndRender();
+                updateSelectedCount();
+
                 if (subscriptions.length === 0 && !nextPageToken) {
                     subscriptionList.classList.add('hidden');
                     actionFooter.classList.add('translate-y-full');
                     emptyState.classList.remove('hidden');
+                    selectAllHeader.classList.add('hidden');
                 }
 
             } catch (err) {
                 console.error(err);
-                alert("Failed to whitelist: " + err.message);
-                btn.innerHTML = originalText;
+                alert('Failed to whitelist: ' + err.message);
+                btn.innerHTML = originalHTML;
                 btn.disabled = false;
             }
         }
@@ -640,46 +763,58 @@
         function renderSubscriptions(subsToRender, isFiltered = false) {
             if (subsToRender.length === 0) {
                 subscriptionList.classList.add('hidden');
+                selectAllHeader.classList.add('hidden');
                 noSearchResults.classList.remove('hidden');
                 return;
             }
-            
+
             noSearchResults.classList.add('hidden');
             subscriptionList.classList.remove('hidden');
+            selectAllHeader.classList.remove('hidden');
 
-            subscriptionList.innerHTML = subsToRender.map((sub, activeIdx) => {
-                // If filtered, map back to original index for checkboxes. Otherwise original index = activeIdx.
+            const rowsHtml = subsToRender.map((sub, activeIdx) => {
                 const originalIdx = isFiltered ? filteredIndices[activeIdx] : activeIdx;
-                
+                // BUG-15 FIX: escape all user-controlled values shown in HTML
+                const safeName  = escapeHtml(sub.name);
+                const safeEmail = escapeHtml(sub.email);
                 return `
                 <div class="subscription-row group outline-none" tabindex="0">
-                    <div class="flex items-center p-6 sm:px-8 hover:bg-indigo-50/40 dark:hover:bg-indigo-900/20 transition-colors duration-200 border-b border-slate-50 dark:border-slate-800/50 last:border-0">
-                        <div class="flex-1 cursor-pointer pr-4" onclick="toggleEmails(${originalIdx}, '${sub.email}')">
-                            <div class="font-bold text-lg text-slate-800 dark:text-slate-200 flex items-center gap-3 mb-1">
-                                <span class="capitalize group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">${sub.name}</span>
+                    <div class="flex items-center p-5 sm:px-8 hover:bg-indigo-50/40 dark:hover:bg-indigo-900/20 transition-colors duration-200 border-b border-slate-50 dark:border-slate-800/50 last:border-0" id="row-inner-${originalIdx}">
+                        <div class="flex-1 cursor-pointer pr-4"
+                             data-idx="${originalIdx}"
+                             data-email="${safeEmail}"
+                             onclick="toggleEmails(${originalIdx}, this.dataset.email)">
+                            <div class="font-bold text-base text-slate-800 dark:text-slate-200 flex items-center gap-2 mb-0.5">
+                                <span class="capitalize group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">${safeName}</span>
                                 <div class="bg-slate-100 dark:bg-slate-700/50 text-slate-500 dark:text-slate-400 p-1 rounded-md group-hover:bg-indigo-100 dark:group-hover:bg-indigo-900/50 group-hover:text-indigo-500 dark:group-hover:text-indigo-400 transition-colors" id="chevron-wrapper-${originalIdx}">
                                     <svg class="w-4 h-4 transition-transform duration-300" id="chevron-${originalIdx}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                 </div>
                             </div>
                             <div class="flex items-center gap-2 flex-wrap text-sm">
-                                <span class="font-medium text-slate-500 dark:text-slate-400">${sub.email}</span>
-                                <span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-600"></span>
-                                <span class="font-semibold px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300">${sub.count} scans</span>
-                                <span class="font-semibold px-2 py-0.5 rounded bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 border border-indigo-100/50 dark:border-indigo-800/50">${sub.category || 'Promotions'}</span>
-                                ${sub.unsub_link ? '<span class="font-semibold px-2 py-0.5 rounded bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 border border-emerald-100/50 dark:border-emerald-800/50">Unsub Link Ready</span>' : ''}
+                                <span class="font-medium text-slate-500 dark:text-slate-400">${safeEmail}</span>
+                                ${sub.unsub_link ? '<span class="font-semibold px-2 py-0.5 rounded bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 border border-emerald-100/50 dark:border-emerald-800/50">Unsub Link ✓</span>' : ''}
                             </div>
                         </div>
-                        <div class="flex items-center gap-3">
-                            <!-- Whitelist Button -->
-                            <button class="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/50 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 transition-colors focus:outline-none" onclick="whitelistSender(event, ${originalIdx}, '${sub.email}')">
+                        <div class="flex items-center gap-2 sm:gap-3">
+                            <!-- Whitelist Button: BUG-15 FIX: email passed via data attribute to avoid inline JS injection -->
+                            <button class="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/50 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 transition-colors focus:outline-none"
+                                    data-email="${safeEmail}"
+                                    onclick="whitelistSender(event, this.dataset.email)">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
                                 Whitelist
                             </button>
-                            <!-- Divider -->
-                            <div class="w-px h-6 bg-slate-200 dark:bg-slate-700"></div>
-                            <!-- Selection Toggle -->
+                            <div class="w-px h-8 bg-slate-200 dark:bg-slate-700"></div>
+                            <!-- Unsub Toggle -->
                             <div class="flex flex-col items-center gap-0.5">
-                                <span class="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wide">Delete</span>
+                                <span class="text-[9px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wide">Unsub</span>
+                                <label class="toggle-switch unsub-toggle">
+                                    <input type="checkbox" value="${originalIdx}" class="unsub-checkbox" ${unsubSet.has(originalIdx) ? 'checked' : ''} onchange="toggleUnsub(${originalIdx}, this.checked)">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <!-- Delete Toggle -->
+                            <div class="flex flex-col items-center gap-0.5">
+                                <span class="text-[9px] font-bold text-red-500 dark:text-red-400 uppercase tracking-wide">Delete</span>
                                 <label class="toggle-switch">
                                     <input type="checkbox" value="${originalIdx}" class="sub-checkbox" ${selectedSet.has(originalIdx) ? 'checked' : ''} onchange="toggleSelected(${originalIdx}, this.checked)">
                                     <span class="slider"></span>
@@ -687,29 +822,37 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Expanded Emails View -->
-                    <div id="emails-${originalIdx}" class="hidden bg-slate-50/80 dark:bg-slate-900/30 px-6 sm:px-8 py-6 border-y border-slate-100 dark:border-slate-800 shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]">
+                    <div id="emails-${originalIdx}" class="hidden bg-slate-50/80 dark:bg-slate-800/50 px-6 sm:px-8 py-6 border-y border-slate-100 dark:border-slate-800 shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]">
                         <div class="text-center py-6 text-sm text-slate-500 dark:text-slate-400 flex flex-col items-center justify-center">
                             <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 dark:border-indigo-400 border-r-2 border-r-transparent mb-3"></div>
                             <span class="font-medium animate-pulse">Retrieving historical context...</span>
                         </div>
                     </div>
                 </div>
-            `}).join('');
+                `;
+            }).join('');
+
+            const header = document.getElementById('select-all-header');
+            while (subscriptionList.lastChild && subscriptionList.lastChild !== header) {
+                subscriptionList.removeChild(subscriptionList.lastChild);
+            }
+            subscriptionList.insertAdjacentHTML('beforeend', rowsHtml);
         }
 
         async function toggleEmails(index, senderEmail) {
             const container = document.getElementById(`emails-${index}`);
             const chevron = document.getElementById(`chevron-${index}`);
             const chevronWrapper = document.getElementById(`chevron-wrapper-${index}`);
+            const rowInner = document.getElementById(`row-inner-${index}`);
             
             if (!container.classList.contains('hidden')) {
                 container.classList.add('hidden');
                 chevron.classList.remove('rotate-180');
                 chevronWrapper.classList.remove('bg-indigo-100', 'text-indigo-500');
                 chevronWrapper.classList.add('bg-slate-100', 'text-slate-500');
-                container.parentElement.classList.remove('bg-slate-50/50');
+                if (rowInner) rowInner.classList.remove('bg-indigo-50/30', 'dark:bg-indigo-900/10');
                 return;
             }
             
@@ -717,7 +860,8 @@
             chevron.classList.add('rotate-180');
             chevronWrapper.classList.add('bg-indigo-100', 'text-indigo-500');
             chevronWrapper.classList.remove('bg-slate-100', 'text-slate-500');
-            container.parentElement.classList.add('bg-slate-50/50');
+            // Use a subtle tint that works in both light and dark mode (not white)
+            if (rowInner) rowInner.classList.add('bg-indigo-50/30', 'dark:bg-indigo-900/10');
             
             if (container.dataset.loaded) return;
             
@@ -754,33 +898,49 @@
             }
         }
 
-        // Called when a toggle changes — updates selectedSet then refreshes footer
+        // Toggle DELETE selection
         function toggleSelected(originalIdx, isChecked) {
             if (isChecked) {
                 selectedSet.add(originalIdx);
             } else {
                 selectedSet.delete(originalIdx);
             }
+            syncMasterCheckbox();
             updateSelectedCount();
         }
 
-        // Delegate change event for checkboxes since they are dynamically rendered
-        // The onclick logic inside the HTML string handles updateSelectedCount visually via onchange
+        // Toggle UNSUB selection
+        function toggleUnsub(originalIdx, isChecked) {
+            if (isChecked) {
+                unsubSet.add(originalIdx);
+            } else {
+                unsubSet.delete(originalIdx);
+            }
+        }
+
         function updateSelectedCount() {
             const count = selectedSet.size;
             selectedCount.textContent = count;
 
-            // Sum the real totalCount (from full inbox) for selected senders
-            // Fall back to scanned count if real count not yet loaded
             let totalEmailsToDelete = 0;
+            let allCountsLoaded = true;
             selectedSet.forEach(idx => {
                 const sub = subscriptions[idx];
                 if (sub) {
                     totalEmailsToDelete += sub.totalCount !== undefined ? sub.totalCount : (sub.count || 0);
+                    if (!sub._countLoaded) allCountsLoaded = false;
                 }
             });
-            footerEmailCount.textContent = totalEmailsToDelete.toLocaleString();
-            
+
+            // BUG-16 FIX: Show 'estimating...' label while real counts are loading
+            if (count > 0 && !allCountsLoaded) {
+                footerEmailCount.textContent = totalEmailsToDelete.toLocaleString();
+                footerCountLoading.classList.remove('hidden');
+            } else {
+                footerEmailCount.textContent = totalEmailsToDelete.toLocaleString();
+                footerCountLoading.classList.add('hidden');
+            }
+
             if (count === 0) {
                 executeBtn.disabled = true;
                 executeBtn.classList.remove('from-indigo-600', 'to-purple-600', 'hover:-translate-y-0.5');
@@ -790,12 +950,12 @@
                 executeBtn.classList.add('from-indigo-600', 'to-purple-600', 'hover:-translate-y-0.5');
                 executeBtn.classList.remove('bg-slate-300', 'text-slate-500');
             }
-            
-            // Pulse animation on count
+
             selectedCount.classList.remove('scale-110');
-            void selectedCount.offsetWidth; // trigger reflow
+            void selectedCount.offsetWidth;
             selectedCount.classList.add('scale-110', 'transition-transform');
             setTimeout(() => selectedCount.classList.remove('scale-110'), 200);
+            syncMasterCheckbox();
         }
 
         const confirmModal = document.getElementById('confirm-modal');
@@ -818,10 +978,14 @@
             const allCheckboxes = Array.from(document.querySelectorAll('.sub-checkbox:checked'));
             if (allCheckboxes.length === 0) return;
             
-            modalText.innerHTML = `You are about to unsubscribe and permanently delete all history from <b class="text-slate-800">${selectedSet.size} companies</b>. This action cannot be undone.`;
+            const retentionDays = parseInt(retentionSelect.value);
+            const retentionText = retentionDays > 0
+                ? ` Emails newer than ${retentionSelect.options[retentionSelect.selectedIndex].text.replace('Keep l','L')} will be <b>kept</b>.`
+                : '';
+            
+            modalText.innerHTML = `You are about to process <b class="text-slate-800 dark:text-white">${selectedSet.size} sender(s)</b>. This action cannot be undone.${retentionText}`;
             
             confirmModal.classList.remove('hidden');
-            // Trigger animation
             setTimeout(() => {
                 modalPanel.classList.remove('scale-95', 'opacity-0');
                 modalPanel.classList.add('scale-100', 'opacity-100');
@@ -829,11 +993,17 @@
         });
 
         btnConfirm.addEventListener('click', async () => {
+            // BUG-06 FIX: Only ONE declaration of selectedSubs, guard check after it
+            const retentionDays = parseInt(retentionSelect.value);
             const selectedIndicesArr = Array.from(selectedSet);
-            const selectedSubs = selectedIndicesArr.map(i => subscriptions[i]).filter(Boolean);
+            const selectedSubs = selectedIndicesArr.map(i => {
+                const sub = subscriptions[i];
+                if (!sub) return null;
+                return { ...sub, should_unsub: unsubSet.has(i) };
+            }).filter(Boolean);
+
             if (selectedSubs.length === 0) return;
-            
-            // Initial Loading State
+
             btnConfirm.disabled = true;
             btnConfirm.innerHTML = `
                 <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
@@ -842,38 +1012,31 @@
                 </svg>
                 Initializing Queue...
             `;
-            btnCancel.classList.add('hidden'); // hide cancel btn during operation
-            
+            btnCancel.classList.add('hidden');
+
             try {
-                const response = await fetch('/execute', {
+                const response = await authedFetch('/execute', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ subscriptions: selectedSubs })
+                    body: JSON.stringify({ subscriptions: selectedSubs, retention_days: retentionDays })
                 });
-                
-                if (response.status === 401) {
-                    window.location.href = '/login';
-                    return;
-                }
-                
+
+                if (response.status === 401) { window.location.href = '/login'; return; }
+
                 const result = await response.json();
                 if (result.error) throw new Error(result.error);
-                
+
                 const taskId = result.task_id;
-                
-                // Switch modal UI to Progress Mode
-                modalPanel.querySelector('.p-6').innerHTML = `
+
+                // Switch modal to progress view
+                modalPanel.querySelector('.p-6, .p-8').innerHTML = `
                     <div class="py-4">
                         <div class="flex justify-between items-center mb-4">
                             <h3 class="text-xl font-bold text-slate-900 dark:text-white">Eradicating...</h3>
                             <span id="poll-percent" class="text-sm font-bold text-indigo-600 dark:text-indigo-400">0%</span>
                         </div>
-                        
-                        <!-- Progress Bar -->
                         <div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-3 mb-6 overflow-hidden">
                             <div id="poll-progress-bar" class="bg-gradient-to-r from-indigo-500 to-purple-500 h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
                         </div>
-                        
                         <div class="space-y-3 bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-700/50">
                             <div class="flex justify-between text-sm">
                                 <span class="text-slate-500 dark:text-slate-400">Current Target:</span>
@@ -890,64 +1053,67 @@
                         </div>
                     </div>
                 `;
-                
-                // Start Polling
+
+                // BUG-08 FIX: Zombie-killing poller — stops after 5 consecutive network failures
+                let pollFailCount = 0;
+                const MAX_POLL_FAILURES = 5;
                 const pollInterval = setInterval(async () => {
                     try {
                         const statusRes = await fetch('/task-status/' + taskId);
-                        if (statusRes.status === 401) return; // session died
-                        
+                        if (statusRes.status === 401) return;
+
                         const statusData = await statusRes.json();
-                        
-                        // Error State
+                        pollFailCount = 0; // reset on success
+
                         if (statusData.status === 'error') {
                             clearInterval(pollInterval);
-                            alert('Task Failed: ' + statusData.error_message);
+                            alert('Task Failed: ' + (statusData.error_message || 'Unknown error'));
                             location.reload();
                             return;
                         }
-                        
-                        // Update UI
+
+                        const pct = statusData.total > 0
+                            ? Math.round((statusData.processed / statusData.total) * 100) : 0;
                         document.getElementById('poll-target').innerText = statusData.current_target || '...';
                         document.getElementById('poll-companies').innerText = `${statusData.processed} / ${statusData.total}`;
-                        document.getElementById('poll-trashed').innerText = statusData.messages_deleted.toLocaleString();
-                        
-                        const pct = statusData.total > 0 ? Math.round((statusData.processed / statusData.total) * 100) : 0;
+                        document.getElementById('poll-trashed').innerText = (statusData.messages_deleted || 0).toLocaleString();
                         document.getElementById('poll-percent').innerText = pct + '%';
                         document.getElementById('poll-progress-bar').style.width = pct + '%';
-                        
-                        // Completed State
+
                         if (statusData.status === 'completed') {
                             clearInterval(pollInterval);
-                            
-                            // Transform to Success State
-                            modalPanel.querySelector('.p-6').innerHTML = `
+                            modalPanel.querySelector('.p-6, .p-8').innerHTML = `
                                 <div class="text-center py-6">
-                                    <div class="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-4 scale-0 animate-[pop_0.3s_ease-out_forwards]">
+                                    <div class="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-4">
                                         <svg class="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                                     </div>
-                                    <h3 class="text-2xl font-bold text-slate-900 mb-2">Success!</h3>
-                                    <p class="text-slate-500 mb-4">Successfully eradicated <b>${statusData.total} targets</b> and safely moved <b>${statusData.messages_deleted.toLocaleString()} emails</b> to the Trash.</p>
-                                    <button onclick="location.reload()" class="px-6 py-2.5 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-colors w-full focus:outline-none">Refresh Dashboard</button>
+                                    <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-2">Done!</h3>
+                                    <p class="text-slate-500 dark:text-slate-400 mb-4">Processed <b>${statusData.total} sender(s)</b> and moved <b>${(statusData.messages_deleted || 0).toLocaleString()} emails</b> to Trash.</p>
+                                    <p class="text-xs text-slate-400 mb-5">Emails are in Gmail Trash for 30 days before permanent deletion. You can restore them there if needed.</p>
+                                    <button onclick="location.reload()" class="px-6 py-2.5 bg-slate-900 dark:bg-white dark:text-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-colors w-full focus:outline-none">Refresh Dashboard</button>
                                 </div>
                             `;
                         }
-                        
                     } catch (pollErr) {
-                        console.error("Polling error:", pollErr);
+                        // BUG-08 FIX: Count failures and kill zombie interval
+                        pollFailCount++;
+                        console.error(`Polling error (${pollFailCount}/${MAX_POLL_FAILURES}):`, pollErr);
+                        if (pollFailCount >= MAX_POLL_FAILURES) {
+                            clearInterval(pollInterval);
+                            alert('Lost connection to server. Your deletion may still be running. Please refresh to check status.');
+                            location.reload();
+                        }
                     }
-                }, 1000); // Poll every second
+                }, 1500); // poll every 1.5s (was 1s — reduces server load)
 
             } catch (error) {
                 alert('Execution failed: ' + error.message);
                 btnConfirm.disabled = false;
-                btnConfirm.innerHTML = 'Eradicate Them';
+                btnConfirm.innerHTML = 'Eradicate';
                 btnCancel.classList.remove('hidden');
             }
         });
 
-        // Init
-        fetchSubscriptions();
 
         // Info Modal Logic
         const infoModal = document.getElementById('info-modal');

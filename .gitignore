@@ -8,3 +8,9 @@ __pycache__/
 build/
 dist/
 *.spec
+venv/
+.venv/
+*.log
+.DS_Store
+.vscode/
+.idea/
