@@ -571,17 +571,25 @@ def get_profile():
 
 def process_eradication_task(task_id: str, creds_dict: dict, selected_subs: list):
     try:
-        creds = Credentials(**creds_dict)
-        service = build(API_SERVICE_NAME, API_VERSION, credentials=creds)
-
         total_subs = len(selected_subs)
         with _tasks_lock:
             tasks_status[task_id]['total'] = total_subs
 
-        for sub in selected_subs:
+        def eradicate_single(sub):
+            # Create a dedicated creds and service per thread to avoid non-thread-safe errors!
+            from google.oauth2.credentials import Credentials as OAuthCreds
+            from googleapiclient.discovery import build as build_service
+            import requests, urllib.parse, base64
+            from email.message import EmailMessage
+            from datetime import datetime, timedelta
+
+            thread_creds = OAuthCreds(**creds_dict)
+            service = build_service(API_SERVICE_NAME, API_VERSION, credentials=thread_creds)
+
             sender_email = (sub.get('email') or '').strip().lower()
+
             with _tasks_lock:
-                tasks_status[task_id]['current_target'] = sender_email
+                tasks_status[task_id]['current_target'] = f"{sender_email} (and others)"
 
             try:
                 # ── Unsubscribe (only if user toggled Unsub ON) ──
@@ -625,7 +633,7 @@ def process_eradication_task(task_id: str, creds_dict: dict, selected_subs: list
                     print(f"[{task_id}] Skipping invalid sender email: {sender_email}")
                     with _tasks_lock:
                         tasks_status[task_id]['processed'] += 1
-                    continue
+                    return
 
                 query = f'from:{sender_email}'
 
@@ -667,8 +675,17 @@ def process_eradication_task(task_id: str, creds_dict: dict, selected_subs: list
                 with _tasks_lock:
                     tasks_status[task_id]['processed'] += 1
 
+        with ThreadPoolExecutor(max_workers=5) as executor:
+            futures = {executor.submit(eradicate_single, sub): sub for sub in selected_subs}
+            for future in as_completed(futures):
+                try:
+                    future.result()
+                except Exception as e:
+                    print(f"[{task_id}] Thread error: {e}")
+
         with _tasks_lock:
             tasks_status[task_id]['status'] = 'completed'
+            tasks_status[task_id]['current_target'] = 'Done'
 
         # BUG-03 FIX: Schedule cleanup of this task after 5 minutes
         _schedule_task_cleanup(task_id, delay_seconds=300)
