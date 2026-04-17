@@ -1,4 +1,4 @@
-# How to Share Your Inbox Janitor
+# How to Share Your INBOX JANITOR
 
 Because your application reads, sends, and trashes emails, Google considers it a **highly sensitive** app. You cannot just share a link and let anyone log in. Google strictly limits who can use it unless you undergo a rigorous security audit ($15,000 to $75,000+).
 
@@ -86,6 +86,6 @@ Whether they run it locally or visit your hosted link:
 2.  Google will show them a terrifying warning screen: **"Google hasn't verified this app"**.
     *   *This happens because your app is in Testing Mode and hasn't passed the $15k security audit.*
 3.  Tell your friend to click the tiny **"Advanced"** link at the bottom left.
-4.  Then, tell them to click the link that says **"Go to Inbox Janitor (unsafe)"**.
+4.  Then, tell them to click the link that says **"Go to INBOX JANITOR (unsafe)"**.
 5.  They check the boxes to grant the required permissions to view and modify their emails.
 6.  They will now be logged in to your app!

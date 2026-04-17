@@ -29,23 +29,24 @@ from googleapiclient.errors import HttpError
 # Configuration
 # ---------------------------------------------------------------------------
 
-# BUG-05 FIX: Only allow insecure transport in explicit local dev mode
-if os.environ.get('FLASK_ENV') == 'development':
-    os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
-
 os.environ['OAUTHLIB_RELAX_TOKEN_SCOPE'] = '1'
-
 CLIENT_SECRETS_FILE = os.environ.get('CLIENT_SECRETS_FILE', 'credentials.json')
 SCOPES = ['https://mail.google.com/']
 API_SERVICE_NAME = 'gmail'
 API_VERSION = 'v1'
 
-# ---------------------------------------------------------------------------
-# App Setup
-# ---------------------------------------------------------------------------
-
 app = Flask(__name__)
-app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
+
+# BUG-12/Safari FIX: Configure session cookies for localhost stability
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+app.config['SESSION_COOKIE_SECURE'] = False  # Set to True only if using HTTPS
+
+# BUG-05 FIX: Only allow insecure transport in local dev mode
+if os.environ.get('FLASK_ENV') == 'development':
+    os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
+else:
+    # BUG-11: Conditionally use ProxyFix only behind a production proxy
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
 # BUG-01 FIX: Secret key from environment variable — never hardcoded
 _raw_secret = os.environ.get('SECRET_KEY')
@@ -121,6 +122,15 @@ def handle_http_error(e):
         session.pop('credentials', None)
         return jsonify({'error': 'Authentication failed or token revoked.'}), 401
     return jsonify({'error': f'Google API Error: {e.reason}'}), int(e.resp.status)
+
+@app.after_request
+def add_header(response):
+    """Prevent browser from caching API responses so recent emails always sync."""
+    if request.path == '/scan' or request.path.startswith('/api/'):
+        response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
+    return response
 
 # ---------------------------------------------------------------------------
 # Database Models
@@ -289,7 +299,9 @@ def login():
         redirect_uri=url_for('callback', _external=True)
     )
     authorization_url, state = flow.authorization_url(
-        access_type='offline', include_granted_scopes='true'
+        access_type='offline',
+        include_granted_scopes='true',
+        prompt='select_account'
     )
     session['state'] = state
     if hasattr(flow, 'code_verifier'):
@@ -389,9 +401,10 @@ def scan_inbox():
                     sender_email=sender_email,
                     sender_name=parsed['from_name'],
                     unsub_link=parsed['unsub_link'],
+                    frequency=0
                 )
                 db.session.add(sub_record)
-            sub_record.frequency = subscriptions[sender_email]['count']
+            sub_record.frequency += subscriptions[sender_email]['count']
         except Exception as e:
             print(f"DB upsert error for {sender_email}: {e}")
 
